@@ -223,6 +223,7 @@
       </div>
       <p>that’s 5 points total.</p>
       <a href="#questions" class="start-questions">Start the questions ↓</a>
+      <p id="js-check" style="margin-top:1rem;font-size:0.9rem;color:var(--muted);">Loading…</p>
     </div>
 
     <h2 id="questions" class="questions-heading">Questions</h2>
@@ -437,6 +438,10 @@
   </div>
 
   <script>
+    (function(){
+      var el = document.getElementById('js-check');
+      if (el) el.textContent = 'JavaScript is working — totals will update as you type.';
+    })();
     const QUESTIONS = [
       { q: "After a new format has been explained:", opts: [
         "I am the first one to try this new format.",
