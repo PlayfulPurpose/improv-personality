@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Improv Model Questionnaire</title>
+  <style>
+    :root {
+      --bg: #f8f6f3;
+      --card: #fff;
+      --text: #1a1a1a;
+      --muted: #5c5c5c;
+      --accent: #2d5a4a;
+      --accent-light: #e8f0ee;
+      --border: #e0ddd8;
+      --error: #b33;
+      --radius: 12px;
+      --shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      padding: 1.5rem;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-top: 0;
+    }
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      color: var(--text);
+    }
+    .intro {
+      background: var(--card);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 2rem;
+      border-left: 4px solid var(--accent);
+    }
+    .intro p { margin: 0 0 0.75rem; }
+    .intro p:last-child { margin-bottom: 0; }
+    .guidelines {
+      background: var(--accent-light);
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius);
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
+    .guidelines strong { display: block; margin-bottom: 0.25rem; }
+    .example-stack {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1.25rem;
+      margin: 0.75rem 0 1rem;
+      font-size: 0.95rem;
+    }
+    .example-stack .example-line { display: block; }
+    .start-questions {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: filter 0.15s;
+    }
+    .start-questions:hover { filter: brightness(1.08); color: #fff; }
+    .start-questions:active { filter: brightness(0.95); }
+    .questions-heading { margin-top: 2rem; margin-bottom: 0.5rem; scroll-margin-top: 1rem; }
+    .question-block {
+      background: var(--card);
+      padding: 1.25rem 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 1rem;
+    }
+    .question-block .q-num { color: var(--accent); font-weight: 600; margin-right: 0.25rem; }
+    .question-block .q-text { margin-bottom: 1rem; }
+    .options {
+      display: grid;
+      gap: 0.5rem;
+    }
+    .option-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .option-row label { flex: 0 0 1.5rem; text-align: right; font-weight: 500; }
+    .option-row .opt-text { flex: 1 1 200px; color: var(--muted); font-size: 0.95rem; }
+    .option-row input {
+      width: 4rem;
+      padding: 0.35rem 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 1rem;
+      text-align: center;
+    }
+    .option-row input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-light);
+    }
+    .option-row input.invalid { border-color: var(--error); background: #fff5f5; }
+    .q-sum {
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .q-sum.error { color: var(--error); }
+    .q-sum.ok { color: var(--accent); }
+    button {
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      margin-top: 1rem;
+      font-weight: 600;
+    }
+    button:hover { filter: brightness(1.08); }
+    button:active { filter: brightness(0.95); }
+    .results { display: none; margin-top: 2rem; }
+    .results.visible { display: block; }
+    .scores-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      background: var(--card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .scores-table th, .scores-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .scores-table th { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+    .scores-table tr:last-child td { border-bottom: none; }
+    .scores-table .total-row { font-weight: 600; background: var(--accent-light); }
+    .quadrant-wrap {
+      margin: 2rem 0;
+      background: var(--card);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .quadrant-wrap h3 { margin-top: 0; color: var(--accent); }
+    #quadrant-svg {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 1rem auto;
+    }
+    .profile-card {
+      background: var(--card);
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-top: 1.5rem;
+      border-left: 4px solid var(--accent);
+    }
+    .profile-card h3 { margin-top: 0; color: var(--accent); }
+    .profile-card ul { margin: 0.5rem 0; padding-left: 1.25rem; }
+    .profile-card .however { margin-top: 1rem; font-weight: 600; }
+    .back-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .back-link:hover { text-decoration: underline; }
+    .axis-calc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="questionnaire">
+    <h1>Improv Model Questionnaire</h1>
+
+    <div class="intro">
+      <h2>Goal of the questionnaire</h2>
+      <p>This questionnaire is developed as a means of getting insight into your own improvisation. It is therefore important that you focus on the actual drama that you have displayed during the improvisation exercises when answering these questions.</p>
+
+      <h2>Guidelines</h2>
+      <div class="guidelines">
+        <strong>This questionnaire consists of sixteen propositions regarding your improvisation play.</strong>
+        Per proposition you have <strong>five points to divide</strong> over the statements (a) through (d). The answer that applies best to your play gets the highest rating (maximum 5). The answer that least applies gets the lowest (minimum 0). <strong>Per question you must assign exactly five points in total</strong> across a, b, c and d.
+      </div>
+      <p><em>Example:</em> If you put</p>
+      <div class="example-stack">
+        <span class="example-line">2 on (a),</span>
+        <span class="example-line">1 on (b),</span>
+        <span class="example-line">2 on (c), and</span>
+        <span class="example-line">0 on (d),</span>
+      </div>
+      <p>that’s 5 points total.</p>
+      <a href="#questions" class="start-questions">Start the questions ↓</a>
+    </div>
+
+    <h2 id="questions" class="questions-heading">Questions</h2>
+    <form id="form">
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">1.</span> After a new format has been explained:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">I am the first one to try this new format.</span><input type="number" min="0" max="5" step="1" value="0" data-q="0" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">I first pose some critical questions on the exact meaning of this format.</span><input type="number" min="0" max="5" step="1" value="0" data-q="0" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">I calmly wait and see who will take the initiative.</span><input type="number" min="0" max="5" step="1" value="0" data-q="0" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">I set the scene and divide the characters.</span><input type="number" min="0" max="5" step="1" value="0" data-q="0" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="0">Total: 0 / 5</div>
+      </div>
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">2.</span> At the beginning of a scene:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">I often define the main story lines.</span><input type="number" min="0" max="5" step="1" value="0" data-q="1" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">I follow the idea of my fellow improv actor.</span><input type="number" min="0" max="5" step="1" value="0" data-q="1" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">I quietly watch how the scene develops.</span><input type="number" min="0" max="5" step="1" value="0" data-q="1" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">I quickly find the character that I can lose myself in.</span><input type="number" min="0" max="5" step="1" value="0" data-q="1" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="1">Total: 0 / 5</div>
+      </div>
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">3.</span> When acting together:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">I find it hard to go along with the ideas of my fellow actor.</span><input type="number" min="0" max="5" step="1" value="0" data-q="2" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">I like to follow the ideas of my fellow actor.</span><input type="number" min="0" max="5" step="1" value="0" data-q="2" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">I have just so many ideas that I leave little room for my fellow actors.</span><input type="number" min="0" max="5" step="1" value="0" data-q="2" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">I have many new ideas but I do not forget my fellow actors.</span><input type="number" min="0" max="5" step="1" value="0" data-q="2" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="2">Total: 0 / 5</div>
+      </div>
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">4.</span> When improvising, I believe the following is true:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">you need plenty of guts and nerves.</span><input type="number" min="0" max="5" step="1" value="0" data-q="3" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">you need to think fast.</span><input type="number" min="0" max="5" step="1" value="0" data-q="3" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">good teamwork is important.</span><input type="number" min="0" max="5" step="1" value="0" data-q="3" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">it is often a coincidental concurrence of circumstances.</span><input type="number" min="0" max="5" step="1" value="0" data-q="3" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="3">Total: 0 / 5</div>
+      </div>
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">5.</span> When I look at a scene:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">I enjoy the acting that I see.</span><input type="number" min="0" max="5" step="1" value="0" data-q="4" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">I have plenty of ideas how to improve it.</span><input type="number" min="0" max="5" step="1" value="0" data-q="4" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">I wonder what the scene will lead to.</span><input type="number" min="0" max="5" step="1" value="0" data-q="4" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">I want to jump in and join.</span><input type="number" min="0" max="5" step="1" value="0" data-q="4" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="4">Total: 0 / 5</div>
+      </div>
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">6.</span> During a scene without any structure:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">I decide what we are going to play.</span><input type="number" min="0" max="5" step="1" value="0" data-q="5" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">I immerse in the acting without really knowing what will happen.</span><input type="number" min="0" max="5" step="1" value="0" data-q="5" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">I observe well what is being created.</span><input type="number" min="0" max="5" step="1" value="0" data-q="5" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">I first want to discuss what we are going to do.</span><input type="number" min="0" max="5" step="1" value="0" data-q="5" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="5">Total: 0 / 5</div>
+      </div>
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">7.</span> During the most pleasant scene I played:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">people had to laugh a lot about my play.</span><input type="number" min="0" max="5" step="1" value="0" data-q="6" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">my fellow actor(s) and I were tuned in well.</span><input type="number" min="0" max="5" step="1" value="0" data-q="6" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">everything happened as I suspected.</span><input type="number" min="0" max="5" step="1" value="0" data-q="6" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">there was a logical structure in the scene.</span><input type="number" min="0" max="5" step="1" value="0" data-q="6" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="6">Total: 0 / 5</div>
+      </div>
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">8.</span> Please, divide the five points over the following propositions:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">My focus lies mainly with the teamwork and I take the initiative.</span><input type="number" min="0" max="5" step="1" value="0" data-q="7" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">My focus lies mainly with the teamwork, but I do not necessarily have to be in the spotlights myself.</span><input type="number" min="0" max="5" step="1" value="0" data-q="7" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">I am full of ideas and use them to direct the scene.</span><input type="number" min="0" max="5" step="1" value="0" data-q="7" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">I am full of ideas but I do not necessarily have to be in the spotlights myself.</span><input type="number" min="0" max="5" step="1" value="0" data-q="7" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="7">Total: 0 / 5</div>
+      </div>
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">9.</span> The following is my responsibility in a scene:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">to make my fellow actor the star of the show.</span><input type="number" min="0" max="5" step="1" value="0" data-q="8" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">to set up a nice scene.</span><input type="number" min="0" max="5" step="1" value="0" data-q="8" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">to entertain the audience.</span><input type="number" min="0" max="5" step="1" value="0" data-q="8" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">to guard the structure of a scene.</span><input type="number" min="0" max="5" step="1" value="0" data-q="8" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="8">Total: 0 / 5</div>
+      </div>
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">10.</span> After a scene has ended:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">I like to give my opinion.</span><input type="number" min="0" max="5" step="1" value="0" data-q="9" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">I carefully listen to the opinion of the trainer.</span><input type="number" min="0" max="5" step="1" value="0" data-q="9" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">I want to know what the intentions were of my fellow actor.</span><input type="number" min="0" max="5" step="1" value="0" data-q="9" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">I would sometimes like to take over the role of the trainer.</span><input type="number" min="0" max="5" step="1" value="0" data-q="9" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="9">Total: 0 / 5</div>
+      </div>
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">11.</span> Towards the end of a scene:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">I like to give the final joke or last remark.</span><input type="number" min="0" max="5" step="1" value="0" data-q="10" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">I steer the scene towards a suitable closing.</span><input type="number" min="0" max="5" step="1" value="0" data-q="10" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">I have ideas on how the scene should end, but I do not impose those views.</span><input type="number" min="0" max="5" step="1" value="0" data-q="10" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">a fellow actor usually comes up with a suitable closing.</span><input type="number" min="0" max="5" step="1" value="0" data-q="10" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="10">Total: 0 / 5</div>
+      </div>
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">12.</span> Regarding the creation of characters:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">I put down a character that the scene needs.</span><input type="number" min="0" max="5" step="1" value="0" data-q="11" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">I think: act normal, do not exaggerate.</span><input type="number" min="0" max="5" step="1" value="0" data-q="11" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">I first take a good look at the character that my fellow actor has come up with.</span><input type="number" min="0" max="5" step="1" value="0" data-q="11" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">I like to play a character that leaves a big impression.</span><input type="number" min="0" max="5" step="1" value="0" data-q="11" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="11">Total: 0 / 5</div>
+      </div>
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">13.</span> On stage:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">I enjoy getting all the attention.</span><input type="number" min="0" max="5" step="1" value="0" data-q="12" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">I calmly think about my next step.</span><input type="number" min="0" max="5" step="1" value="0" data-q="12" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">I keep the overview of the scene.</span><input type="number" min="0" max="5" step="1" value="0" data-q="12" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">I join in with the scene.</span><input type="number" min="0" max="5" step="1" value="0" data-q="12" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="12">Total: 0 / 5</div>
+      </div>
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">14.</span> My focus lies mainly with:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">the play of my fellow actor.</span><input type="number" min="0" max="5" step="1" value="0" data-q="13" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">my own play.</span><input type="number" min="0" max="5" step="1" value="0" data-q="13" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">the course of the scene.</span><input type="number" min="0" max="5" step="1" value="0" data-q="13" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">playing according to the improvisation principles.</span><input type="number" min="0" max="5" step="1" value="0" data-q="13" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="13">Total: 0 / 5</div>
+      </div>
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">15.</span> When a scene is stuck:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">I can analyze well why that happens.</span><input type="number" min="0" max="5" step="1" value="0" data-q="14" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">we should look calmly to what is being created next.</span><input type="number" min="0" max="5" step="1" value="0" data-q="14" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">the scene did not develop the way I suspected it to develop.</span><input type="number" min="0" max="5" step="1" value="0" data-q="14" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">I know a way to give the play a new twist.</span><input type="number" min="0" max="5" step="1" value="0" data-q="14" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="14">Total: 0 / 5</div>
+      </div>
+      <div class="question-block">
+        <div class="q-text"><span class="q-num">16.</span> When setting up a free scene, created by ourselves:</div>
+        <div class="options">
+          <div class="option-row"><label>a.</label><span class="opt-text">I usually am the panel chairman.</span><input type="number" min="0" max="5" step="1" value="0" data-q="15" data-opt="a" /></div>
+          <div class="option-row"><label>b.</label><span class="opt-text">I contribute a lot of ideas.</span><input type="number" min="0" max="5" step="1" value="0" data-q="15" data-opt="b" /></div>
+          <div class="option-row"><label>c.</label><span class="opt-text">I first want to think of a plan.</span><input type="number" min="0" max="5" step="1" value="0" data-q="15" data-opt="c" /></div>
+          <div class="option-row"><label>d.</label><span class="opt-text">I listen carefully.</span><input type="number" min="0" max="5" step="1" value="0" data-q="15" data-opt="d" /></div>
+        </div>
+        <div class="q-sum" data-q="15">Total: 0 / 5</div>
+      </div>
+    </form>
+
+    <button type="button" id="submit-btn">See my results</button>
+  </div>
+
+  <div id="results" class="results">
+    <h2>Your scores</h2>
+    <table class="scores-table">
+      <thead>
+        <tr>
+          <th>Principal</th>
+          <th>Audience</th>
+          <th>Reviewer</th>
+          <th>Director</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td id="score-P">—</td>
+          <td id="score-A">—</td>
+          <td id="score-R">—</td>
+          <td id="score-D">—</td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="4">Axis totals (for placement on the grid)</td>
+        </tr>
+        <tr>
+          <td colspan="2">X-axis (Individually ← → Together): <strong id="x-axis">—</strong></td>
+          <td colspan="2">Y-axis (Submissive ← → Dominant): <strong id="y-axis">—</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="axis-calc">X = Principal + Audience − Reviewer − Director &nbsp;|&nbsp; Y = Principal + Director − Audience − Reviewer</p>
+
+    <div class="quadrant-wrap">
+      <h3>Your position on the quadrants</h3>
+      <svg id="quadrant-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <!-- Grid and axes and labels and dot drawn by JS -->
+      </svg>
+      <p><strong>Your primary profile:</strong> <span id="primary-profile">—</span></p>
+    </div>
+
+    <div id="profile-content" class="profile-card">
+      <!-- Filled by JS -->
+    </div>
+
+    <a href="#" class="back-link" id="back-link">← Back to questionnaire</a>
+  </div>
+
+  <script>
+    const QUESTIONS = [
+      { q: "After a new format has been explained:", opts: [
+        "I am the first one to try this new format.",
+        "I first pose some critical questions on the exact meaning of this format.",
+        "I calmly wait and see who will take the initiative.",
+        "I set the scene and divide the characters."
+      ]},
+      { q: "At the beginning of a scene:", opts: [
+        "I often define the main story lines.",
+        "I follow the idea of my fellow improv actor.",
+        "I quietly watch how the scene develops.",
+        "I quickly find the character that I can lose myself in."
+      ]},
+      { q: "When acting together:", opts: [
+        "I find it hard to go along with the ideas of my fellow actor.",
+        "I like to follow the ideas of my fellow actor.",
+        "I have just so many ideas that I leave little room for my fellow actors.",
+        "I have many new ideas but I do not forget my fellow actors."
+      ]},
+      { q: "When improvising, I believe the following is true:", opts: [
+        "you need plenty of guts and nerves.",
+        "you need to think fast.",
+        "good teamwork is important.",
+        "it is often a coincidental concurrence of circumstances."
+      ]},
+      { q: "When I look at a scene:", opts: [
+        "I enjoy the acting that I see.",
+        "I have plenty of ideas how to improve it.",
+        "I wonder what the scene will lead to.",
+        "I want to jump in and join."
+      ]},
+      { q: "During a scene without any structure:", opts: [
+        "I decide what we are going to play.",
+        "I immerse in the acting without really knowing what will happen.",
+        "I observe well what is being created.",
+        "I first want to discuss what we are going to do."
+      ]},
+      { q: "During the most pleasant scene I played:", opts: [
+        "people had to laugh a lot about my play.",
+        "my fellow actor(s) and I were tuned in well.",
+        "everything happened as I suspected.",
+        "there was a logical structure in the scene."
+      ]},
+      { q: "Please, divide the five points over the following propositions:", opts: [
+        "My focus lies mainly with the teamwork and I take the initiative.",
+        "My focus lies mainly with the teamwork, but I do not necessarily have to be in the spotlights myself.",
+        "I am full of ideas and use them to direct the scene.",
+        "I am full of ideas but I do not necessarily have to be in the spotlights myself."
+      ]},
+      { q: "The following is my responsibility in a scene:", opts: [
+        "to make my fellow actor the star of the show.",
+        "to set up a nice scene.",
+        "to entertain the audience.",
+        "to guard the structure of a scene."
+      ]},
+      { q: "After a scene has ended:", opts: [
+        "I like to give my opinion.",
+        "I carefully listen to the opinion of the trainer.",
+        "I want to know what the intentions were of my fellow actor.",
+        "I would sometimes like to take over the role of the trainer."
+      ]},
+      { q: "Towards the end of a scene:", opts: [
+        "I like to give the final joke or last remark.",
+        "I steer the scene towards a suitable closing.",
+        "I have ideas on how the scene should end, but I do not impose those views.",
+        "a fellow actor usually comes up with a suitable closing."
+      ]},
+      { q: "Regarding the creation of characters:", opts: [
+        "I put down a character that the scene needs.",
+        "I think: act normal, do not exaggerate.",
+        "I first take a good look at the character that my fellow actor has come up with.",
+        "I like to play a character that leaves a big impression."
+      ]},
+      { q: "On stage:", opts: [
+        "I enjoy getting all the attention.",
+        "I calmly think about my next step.",
+        "I keep the overview of the scene.",
+        "I join in with the scene."
+      ]},
+      { q: "My focus lies mainly with:", opts: [
+        "the play of my fellow actor.",
+        "my own play.",
+        "the course of the scene.",
+        "playing according to the improvisation principles."
+      ]},
+      { q: "When a scene is stuck:", opts: [
+        "I can analyze well why that happens.",
+        "we should look calmly to what is being created next.",
+        "the scene did not develop the way I suspected it to develop.",
+        "I know a way to give the play a new twist."
+      ]},
+      { q: "When setting up a free scene, created by ourselves:", opts: [
+        "I usually am the panel chairman.",
+        "I contribute a lot of ideas.",
+        "I first want to think of a plan.",
+        "I listen carefully."
+      ]}
+    ];
+
+    // Per question: option letter -> column (P=Principal, A=Audience, R=Reviewer, D=Director)
+    const TALLY = [
+      { a: 'P', b: 'R', c: 'A', d: 'D' },
+      { a: 'D', b: 'A', c: 'R', d: 'P' },
+      { a: 'R', b: 'A', c: 'D', d: 'P' },
+      { a: 'P', b: 'D', c: 'A', d: 'R' },
+      { a: 'A', b: 'D', c: 'R', d: 'P' },
+      { a: 'D', b: 'P', c: 'A', d: 'R' },
+      { a: 'P', b: 'A', c: 'D', d: 'R' },
+      { a: 'P', b: 'A', c: 'D', d: 'R' },
+      { a: 'A', b: 'D', c: 'P', d: 'R' },
+      { a: 'R', b: 'A', c: 'P', d: 'D' },
+      { a: 'P', b: 'D', c: 'R', d: 'A' },
+      { a: 'D', b: 'R', c: 'A', d: 'P' },
+      { a: 'P', b: 'R', c: 'D', d: 'A' },
+      { a: 'A', b: 'P', c: 'D', d: 'R' },
+      { a: 'R', b: 'A', c: 'D', d: 'P' },
+      { a: 'D', b: 'P', c: 'R', d: 'A' }
+    ];
+
+    const PROFILES = {
+      P: {
+        name: 'Principal',
+        subtitle: 'lead character',
+        strengths: [
+          'I know how to set about my work',
+          'I enjoy being in the spotlights',
+          'I like to score!',
+          'I dare to make mistakes',
+          'I am enthusiastic',
+          'I am powerful and convincing'
+        ],
+        however: [
+          'I can come across as arrogant',
+          'I can be overwhelming',
+          'I leave little room for others',
+          'I should think better before I act'
+        ]
+      },
+      D: {
+        name: 'Director',
+        subtitle: '',
+        strengths: [
+          'I am independent',
+          'I have my own opinion, that I defend in an open and straightforward way',
+          'I have a vision that I do not hesitate to propagate',
+          'I like having the overview of and control over situations',
+          'I steer processes'
+        ],
+        however: [
+          'I am very critical',
+          'I can be a know-it-all',
+          'I tend to impose my own views not be open to the opinions of others',
+          'Often I think I know it better'
+        ]
+      },
+      A: {
+        name: 'Audience',
+        subtitle: '',
+        strengths: [
+          'I am sensitive and have empathy',
+          'I am focused on my colleagues',
+          'I listen to other one\'s ideas',
+          'I like to help others',
+          'I observe well',
+          'I am a good team player'
+        ],
+        however: [
+          'I can be hesitant',
+          'I often follow others',
+          'I often have others kick me around',
+          'I should stand up for myself more often'
+        ]
+      },
+      R: {
+        name: 'Reviewer',
+        subtitle: '',
+        strengths: [
+          'I am a sober person',
+          'I analyze',
+          'I am rational',
+          'I control my emotions',
+          'I have a strong opinion',
+          'I have a sharp judgment'
+        ],
+        however: [
+          'I can be too critical',
+          'I can be too careful',
+          'I often wait and see which way the wind blows',
+          'I tend to avoid conflicts',
+          'I can be cold'
+        ]
+      }
+    };
+
+    const LABELS = { P: 'Principal', A: 'Audience', R: 'Reviewer', D: 'Director' };
+
+    function renderQuestions() {
+      const form = document.getElementById('form');
+      const letters = ['a', 'b', 'c', 'd'];
+      QUESTIONS.forEach((item, i) => {
+        const block = document.createElement('div');
+        block.className = 'question-block';
+        block.innerHTML = `
+          <div class="q-text"><span class="q-num">${i + 1}.</span> ${item.q}</div>
+          <div class="options">
+            ${item.opts.map((text, j) => `
+              <div class="option-row">
+                <label>${letters[j]}.</label>
+                <span class="opt-text">${text}</span>
+                <input type="number" min="0" max="5" step="1" value="0" data-q="${i}" data-opt="${letters[j]}" />
+              </div>
+            `).join('')}
+          </div>
+          <div class="q-sum" data-q="${i}">Total: 0 / 5</div>
+        `;
+        form.appendChild(block);
+      });
+    }
+
+    function getSums() {
+      const inputs = document.querySelectorAll('#form input[data-q]');
+      const sums = QUESTIONS.map(() => 0);
+      inputs.forEach(inp => {
+        const q = parseInt(inp.dataset.q, 10);
+        const val = parseInt(inp.value, 10) || 0;
+        sums[q] += val;
+      });
+      return sums;
+    }
+
+    function updateSumDisplays() {
+      const sums = getSums();
+      document.querySelectorAll('.q-sum[data-q]').forEach(el => {
+        const q = parseInt(el.dataset.q, 10);
+        const s = sums[q];
+        el.textContent = `Total: ${s} / 5`;
+        el.classList.remove('ok', 'error');
+        el.classList.add(s === 5 ? 'ok' : 'error');
+      });
+      document.querySelectorAll('.option-row input').forEach(inp => {
+        inp.classList.toggle('invalid', false);
+      });
+    }
+
+    function validate() {
+      const sums = getSums();
+      const bad = sums.some(s => s !== 5);
+      if (bad) {
+        document.querySelectorAll('.question-block').forEach((block, i) => {
+          if (sums[i] !== 5) {
+            block.querySelectorAll('input').forEach(inp => inp.classList.add('invalid'));
+          }
+        });
+        return false;
+      }
+      return true;
+    }
+
+    function tally() {
+      const scores = { P: 0, A: 0, R: 0, D: 0 };
+      const inputs = document.querySelectorAll('#form input[data-q][data-opt]');
+      inputs.forEach(inp => {
+        const q = parseInt(inp.dataset.q, 10);
+        const opt = inp.dataset.opt;
+        const val = parseInt(inp.value, 10) || 0;
+        const col = TALLY[q][opt];
+        scores[col] += val;
+      });
+      return scores;
+    }
+
+    function getAxisScores(scores) {
+      const x = scores.P + scores.A - scores.R - scores.D;
+      const y = scores.P + scores.D - scores.A - scores.R;
+      return { x, y };
+    }
+
+    function scaleTo50(x, y) {
+      const maxAbs = 160;
+      return {
+        x: Math.max(-50, Math.min(50, (x / maxAbs) * 50)),
+        y: Math.max(-50, Math.min(50, (y / maxAbs) * 50))
+      };
+    }
+
+    function primaryProfile(sx, sy) {
+      if (sx >= 0 && sy >= 0) return 'P';
+      if (sx < 0 && sy >= 0) return 'D';
+      if (sx < 0 && sy < 0) return 'R';
+      return 'A';
+    }
+
+    function drawQuadrant(svg, sx, sy) {
+      const w = 400, h = 400;
+      const pad = 50;
+      const cx = w / 2, cy = h / 2;
+      const scale = (v) => (v / 50) * (Math.min(w, h) / 2 - pad);
+
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      g.setAttribute('transform', `translate(${cx},${cy})`);
+
+      // Grid
+      for (let i = -50; i <= 50; i += 10) {
+        const s = scale(i);
+        const lineV = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        lineV.setAttribute('x1', s);
+        lineV.setAttribute('y1', -scale(50));
+        lineV.setAttribute('x2', s);
+        lineV.setAttribute('y2', scale(50));
+        lineV.setAttribute('stroke', '#e8e8e4');
+        lineV.setAttribute('stroke-width', i === 0 ? '1.5' : '0.5');
+        g.appendChild(lineV);
+        const lineH = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        lineH.setAttribute('x1', -scale(50));
+        lineH.setAttribute('y1', s);
+        lineH.setAttribute('x2', scale(50));
+        lineH.setAttribute('y2', s);
+        lineH.setAttribute('stroke', '#e8e8e4');
+        lineH.setAttribute('stroke-width', i === 0 ? '1.5' : '0.5');
+        g.appendChild(lineH);
+      }
+
+      // Axes
+      const axH = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      axH.setAttribute('x1', -scale(50));
+      axH.setAttribute('y1', 0);
+      axH.setAttribute('x2', scale(50));
+      axH.setAttribute('y2', 0);
+      axH.setAttribute('stroke', '#333');
+      axH.setAttribute('stroke-width', '1.5');
+      g.appendChild(axH);
+      const axV = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      axV.setAttribute('x1', 0);
+      axV.setAttribute('y1', -scale(50));
+      axV.setAttribute('x2', 0);
+      axV.setAttribute('y2', scale(50));
+      axV.setAttribute('stroke', '#333');
+      axV.setAttribute('stroke-width', '1.5');
+      g.appendChild(axV);
+
+      // Axis labels
+      const labels = [
+        { x: -scale(50) - 38, y: 4, t: 'Individually' },
+        { x: scale(50) + 8, y: 4, t: 'Together' },
+        { x: -28, y: -scale(50) + 4, t: 'Submissive' },
+        { x: -24, y: scale(50) + 14, t: 'Dominant' }
+      ];
+      labels.forEach(({ x, y, t }) => {
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', x);
+        text.setAttribute('y', y);
+        text.setAttribute('text-anchor', x < 0 ? 'end' : 'start');
+        text.setAttribute('fill', '#333');
+        text.setAttribute('font-size', '11');
+        text.setAttribute('font-family', 'Georgia, serif');
+        text.textContent = t;
+        g.appendChild(text);
+      });
+
+      // Quadrant labels
+      const quadLabels = [
+        { x: scale(25), y: -scale(25), t: 'THE PRINCIPAL' },
+        { x: -scale(25), y: -scale(25), t: 'THE DIRECTOR' },
+        { x: -scale(25), y: scale(25), t: 'THE REVIEWER' },
+        { x: scale(25), y: scale(25), t: 'THE AUDIENCE' }
+      ];
+      quadLabels.forEach(({ x, y, t }) => {
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', x);
+        text.setAttribute('y', y);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('fill', '#5c5c5c');
+        text.setAttribute('font-size', '10');
+        text.setAttribute('font-family', 'Georgia, serif');
+        text.textContent = t;
+        g.appendChild(text);
+      });
+
+      // User point
+      const px = scale(sx), py = -scale(sy);
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', px);
+      dot.setAttribute('cy', py);
+      dot.setAttribute('r', '8');
+      dot.setAttribute('fill', '#2d5a4a');
+      dot.setAttribute('stroke', '#fff');
+      dot.setAttribute('stroke-width', '2');
+      g.appendChild(dot);
+
+      svg.innerHTML = '';
+      svg.appendChild(g);
+    }
+
+    function showResults() {
+      if (!validate()) {
+        alert('Please assign exactly 5 points per question (across a, b, c and d) before viewing results.');
+        return;
+      }
+      const scores = tally();
+      const { x, y } = getAxisScores(scores);
+      const { x: sx, y: sy } = scaleTo50(x, y);
+      const primary = primaryProfile(sx, sy);
+
+      document.getElementById('score-P').textContent = scores.P;
+      document.getElementById('score-A').textContent = scores.A;
+      document.getElementById('score-R').textContent = scores.R;
+      document.getElementById('score-D').textContent = scores.D;
+      document.getElementById('x-axis').textContent = x + ' (≈ ' + Math.round(sx) + ' on grid)';
+      document.getElementById('y-axis').textContent = y + ' (≈ ' + Math.round(sy) + ' on grid)');
+      document.getElementById('primary-profile').textContent = PROFILES[primary].name + (PROFILES[primary].subtitle ? ' (' + PROFILES[primary].subtitle + ')' : '');
+
+      drawQuadrant(document.getElementById('quadrant-svg'), sx, sy);
+
+      const card = document.getElementById('profile-content');
+      const p = PROFILES[primary];
+      card.innerHTML = `
+        <h3>I am characterized as ${p.name}${p.subtitle ? ' (' + p.subtitle + ')' : ''}</h3>
+        <p>This means the following:</p>
+        <ul>
+          ${p.strengths.map(s => '<li>' + s + '</li>').join('')}
+        </ul>
+        <p class="however">However…</p>
+        <ul>
+          ${p.however.map(s => '<li>' + s + '</li>').join('')}
+        </ul>
+        <p><em>This model is situation-based: your profile can depend on the situation and your fellow actors. One profile is not better than another.</em></p>
+      `;
+
+      document.getElementById('questionnaire').style.display = 'none';
+      document.getElementById('results').classList.add('visible');
+      document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function backToForm() {
+      document.getElementById('results').classList.remove('visible');
+      document.getElementById('questionnaire').style.display = 'block';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('form');
+      form.addEventListener('input', updateSumDisplays);
+      form.addEventListener('change', updateSumDisplays);
+      document.getElementById('submit-btn').addEventListener('click', showResults);
+      document.getElementById('back-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        backToForm();
+      });
+    });
+  </script>
+</body>
+</html>
