@@ -223,8 +223,11 @@
       </div>
       <p>that’s 5 points total.</p>
       <a href="#questions" class="start-questions">Start the questions ↓</a>
-      <p id="js-check" style="margin-top:1rem;font-size:0.9rem;color:var(--muted);">Loading…</p>
+      <p id="js-check" style="margin-top:1rem;font-size:0.9rem;color:var(--muted);">Loading...</p>
     </div>
+    <script>
+      (function(){ var e = document.getElementById('js-check'); if (e) e.textContent = 'JavaScript is working - totals will update as you type.'; })();
+    </script>
 
     <h2 id="questions" class="questions-heading">Questions</h2>
     <form id="form" oninput="updateSumDisplays()" onchange="updateSumDisplays()">
