@@ -407,7 +407,23 @@ function showResults() {
   for (var i = 0; i < p.strengths.length; i++) html += '<li>' + p.strengths[i] + '</li>';
   html += '</ul><p class="however">However…</p><ul>';
   for (var j = 0; j < p.however.length; j++) html += '<li>' + p.however[j] + '</li>';
-  html += '</ul><p><em>This model is situation-based: your profile can depend on the situation and your fellow actors. One profile is not better than another.</em></p>';
+  html += '</ul>';
+  html += '<p><em>This model is situation-based: your profile can depend on the situation and your fellow actors. One profile is not better than another.</em></p>';
+  html += '<h3 class="other-profiles-heading">The other profiles</h3>';
+  html += '<p class="other-profiles-intro">Here are the other three styles in the model so you can see the full picture.</p>';
+  var keys = ['P', 'D', 'A', 'R'];
+  for (var k = 0; k < keys.length; k++) {
+    var key = keys[k];
+    if (key === primary) continue;
+    var other = PROFILES[key];
+    html += '<div class="profile-card other-profile">';
+    html += '<h4>' + other.name + (other.subtitle ? ' (' + other.subtitle + ')' : '') + '</h4>';
+    html += '<p>This means the following:</p><ul>';
+    for (var i = 0; i < other.strengths.length; i++) html += '<li>' + other.strengths[i] + '</li>';
+    html += '</ul><p class="however">However…</p><ul>';
+    for (var j = 0; j < other.however.length; j++) html += '<li>' + other.however[j] + '</li>';
+    html += '</ul></div>';
+  }
   document.getElementById('profile-content').innerHTML = html;
 
   document.getElementById('questionnaire').style.display = 'none';
