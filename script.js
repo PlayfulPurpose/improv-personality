@@ -226,6 +226,7 @@ function updateSumDisplays() {
     }
     var inputs = document.querySelectorAll('.option-row input');
     for (var j = 0; j < inputs.length; j++) inputs[j].classList.remove('invalid');
+    if (typeof updateNextButton === 'function') updateNextButton();
   } catch (e) { console.error('updateSumDisplays', e); }
 }
 
@@ -341,7 +342,7 @@ function drawQuadrant(svg, sx, sy) {
     text.setAttribute('text-anchor', L.anchor || 'start');
     text.setAttribute('fill', '#333');
     text.setAttribute('font-size', '11');
-    text.setAttribute('font-family', 'Georgia, serif');
+    text.setAttribute('font-family', 'Poppins, sans-serif');
     text.textContent = L.t;
     g.appendChild(text);
   }
@@ -360,7 +361,7 @@ function drawQuadrant(svg, sx, sy) {
     text.setAttribute('text-anchor', 'middle');
     text.setAttribute('fill', '#5c5c5c');
     text.setAttribute('font-size', '10');
-    text.setAttribute('font-family', 'Georgia, serif');
+    text.setAttribute('font-family', 'Poppins, sans-serif');
     text.textContent = Q.t;
     g.appendChild(text);
   }
@@ -419,14 +420,68 @@ function backToForm() {
   document.getElementById('questionnaire').style.display = 'block';
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+var currentStep = 1;
+var totalSteps = 16;
+
+function goToStep(step) {
+  if (step < 1 || step > totalSteps) return;
+  currentStep = step;
+  var steps = document.querySelectorAll('.question-step');
+  for (var i = 0; i < steps.length; i++) {
+    var s = parseInt(steps[i].getAttribute('data-step'), 10);
+    if (s === step) {
+      steps[i].classList.add('active');
+    } else {
+      steps[i].classList.remove('active');
+    }
+  }
+  var prevBtn = document.getElementById('prev-btn');
+  if (prevBtn) prevBtn.style.display = step === 1 ? 'none' : '';
+  var nextBtn = document.getElementById('next-btn');
+  if (nextBtn) {
+    nextBtn.textContent = step === totalSteps ? 'See my results' : 'Next';
+  }
+  var ind = document.getElementById('step-indicator');
+  if (ind) ind.textContent = 'Question ' + step + ' of ' + totalSteps;
+  updateNextButton();
+}
+
+function updateNextButton() {
+  var nextBtn = document.getElementById('next-btn');
+  if (!nextBtn) return;
+  var sums = getSums();
+  var currentSum = currentStep >= 1 && currentStep <= 16 ? sums[currentStep - 1] : 0;
+  nextBtn.disabled = currentSum !== 5;
+}
+
+function onNextClick() {
+  if (currentStep === totalSteps) {
+    showResults();
+  } else {
+    goToStep(currentStep + 1);
+  }
+}
+
+function onPrevClick() {
+  if (currentStep > 1) goToStep(currentStep - 1);
+}
+
+function init() {
   var form = document.getElementById('form');
   if (form) {
     form.addEventListener('input', updateSumDisplays);
     form.addEventListener('change', updateSumDisplays);
   }
-  var btn = document.getElementById('submit-btn');
-  if (btn) btn.addEventListener('click', showResults);
+  var nextBtn = document.getElementById('next-btn');
+  if (nextBtn) {
+    nextBtn.addEventListener('click', onNextClick);
+    nextBtn.disabled = true;
+  }
+  var prevBtn = document.getElementById('prev-btn');
+  if (prevBtn) {
+    prevBtn.addEventListener('click', onPrevClick);
+    prevBtn.style.display = 'none';
+  }
   var back = document.getElementById('back-link');
   if (back) {
     back.addEventListener('click', function(e) {
@@ -434,4 +489,11 @@ document.addEventListener('DOMContentLoaded', function() {
       backToForm();
     });
   }
-});
+  goToStep(1);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}

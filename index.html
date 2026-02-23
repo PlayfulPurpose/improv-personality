@@ -5,6 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Improv Model Questionnaire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #f8f6f3;
@@ -20,7 +23,7 @@
     }
     * { box-sizing: border-box; }
     body {
-      font-family: 'Georgia', 'Times New Roman', serif;
+      font-family: 'Poppins', sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
@@ -142,6 +145,19 @@
     }
     button:hover { filter: brightness(1.08); }
     button:active { filter: brightness(0.95); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .question-step { display: none; }
+    .question-step.active { display: block; }
+    .step-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .step-nav .step-indicator { color: var(--muted); font-size: 0.95rem; }
+    .step-nav .nav-buttons { display: flex; gap: 0.75rem; }
     .results { display: none; margin-top: 2rem; }
     .results.visible { display: block; }
     .scores-table {
@@ -228,6 +244,8 @@
 
     <h2 id="questions" class="questions-heading">Questions</h2>
     <form id="form" oninput="updateSumDisplays()" onchange="updateSumDisplays()">
+      <div id="question-steps">
+      <div class="question-step active" data-step="1">
       <div class="question-block">
         <div class="q-text"><span class="q-num">1.</span> After a new format has been explained:</div>
         <div class="options">
@@ -238,6 +256,8 @@
         </div>
         <div class="q-sum" data-q="0">Total: 0 / 5</div>
       </div>
+      </div>
+      <div class="question-step" data-step="2">
       <div class="question-block">
         <div class="q-text"><span class="q-num">2.</span> At the beginning of a scene:</div>
         <div class="options">
@@ -248,6 +268,8 @@
         </div>
         <div class="q-sum" data-q="1">Total: 0 / 5</div>
       </div>
+      </div>
+      <div class="question-step" data-step="3">
       <div class="question-block">
         <div class="q-text"><span class="q-num">3.</span> When acting together:</div>
         <div class="options">
@@ -258,6 +280,8 @@
         </div>
         <div class="q-sum" data-q="2">Total: 0 / 5</div>
       </div>
+      </div>
+      <div class="question-step" data-step="4">
       <div class="question-block">
         <div class="q-text"><span class="q-num">4.</span> When improvising, I believe the following is true:</div>
         <div class="options">
@@ -268,6 +292,8 @@
         </div>
         <div class="q-sum" data-q="3">Total: 0 / 5</div>
       </div>
+      </div>
+      <div class="question-step" data-step="5">
       <div class="question-block">
         <div class="q-text"><span class="q-num">5.</span> When I look at a scene:</div>
         <div class="options">
@@ -278,6 +304,8 @@
         </div>
         <div class="q-sum" data-q="4">Total: 0 / 5</div>
       </div>
+      </div>
+      <div class="question-step" data-step="6">
       <div class="question-block">
         <div class="q-text"><span class="q-num">6.</span> During a scene without any structure:</div>
         <div class="options">
@@ -288,6 +316,8 @@
         </div>
         <div class="q-sum" data-q="5">Total: 0 / 5</div>
       </div>
+      </div>
+      <div class="question-step" data-step="7">
       <div class="question-block">
         <div class="q-text"><span class="q-num">7.</span> During the most pleasant scene I played:</div>
         <div class="options">
@@ -298,6 +328,8 @@
         </div>
         <div class="q-sum" data-q="6">Total: 0 / 5</div>
       </div>
+      </div>
+      <div class="question-step" data-step="8">
       <div class="question-block">
         <div class="q-text"><span class="q-num">8.</span> Please, divide the five points over the following propositions:</div>
         <div class="options">
@@ -308,6 +340,8 @@
         </div>
         <div class="q-sum" data-q="7">Total: 0 / 5</div>
       </div>
+      </div>
+      <div class="question-step" data-step="9">
       <div class="question-block">
         <div class="q-text"><span class="q-num">9.</span> The following is my responsibility in a scene:</div>
         <div class="options">
@@ -318,6 +352,8 @@
         </div>
         <div class="q-sum" data-q="8">Total: 0 / 5</div>
       </div>
+      </div>
+      <div class="question-step" data-step="10">
       <div class="question-block">
         <div class="q-text"><span class="q-num">10.</span> After a scene has ended:</div>
         <div class="options">
@@ -328,6 +364,8 @@
         </div>
         <div class="q-sum" data-q="9">Total: 0 / 5</div>
       </div>
+      </div>
+      <div class="question-step" data-step="11">
       <div class="question-block">
         <div class="q-text"><span class="q-num">11.</span> Towards the end of a scene:</div>
         <div class="options">
@@ -338,6 +376,8 @@
         </div>
         <div class="q-sum" data-q="10">Total: 0 / 5</div>
       </div>
+      </div>
+      <div class="question-step" data-step="12">
       <div class="question-block">
         <div class="q-text"><span class="q-num">12.</span> Regarding the creation of characters:</div>
         <div class="options">
@@ -348,6 +388,8 @@
         </div>
         <div class="q-sum" data-q="11">Total: 0 / 5</div>
       </div>
+      </div>
+      <div class="question-step" data-step="13">
       <div class="question-block">
         <div class="q-text"><span class="q-num">13.</span> On stage:</div>
         <div class="options">
@@ -358,6 +400,8 @@
         </div>
         <div class="q-sum" data-q="12">Total: 0 / 5</div>
       </div>
+      </div>
+      <div class="question-step" data-step="14">
       <div class="question-block">
         <div class="q-text"><span class="q-num">14.</span> My focus lies mainly with:</div>
         <div class="options">
@@ -368,6 +412,8 @@
         </div>
         <div class="q-sum" data-q="13">Total: 0 / 5</div>
       </div>
+      </div>
+      <div class="question-step" data-step="15">
       <div class="question-block">
         <div class="q-text"><span class="q-num">15.</span> When a scene is stuck:</div>
         <div class="options">
@@ -378,6 +424,8 @@
         </div>
         <div class="q-sum" data-q="14">Total: 0 / 5</div>
       </div>
+      </div>
+      <div class="question-step" data-step="16">
       <div class="question-block">
         <div class="q-text"><span class="q-num">16.</span> When setting up a free scene, created by ourselves:</div>
         <div class="options">
@@ -388,9 +436,14 @@
         </div>
         <div class="q-sum" data-q="15">Total: 0 / 5</div>
       </div>
+      </div>
+      </div>
+      <div class="step-nav">
+        <button type="button" id="prev-btn">Previous</button>
+        <span class="step-indicator" id="step-indicator">Question 1 of 16</span>
+        <button type="button" id="next-btn">Next</button>
+      </div>
     </form>
-
-    <button type="button" id="submit-btn" onclick="showResults()">See my results</button>
   </div>
 
   <div id="results" class="results">
